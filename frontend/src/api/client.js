@@ -36,6 +36,7 @@ export const api = {
   getClasses: () => request("/classes"),
   createClass: (payload) => request("/classes", { method: "POST", body: payload }),
   getClass: (classId) => request(`/classes/${classId}`),
+  deleteClass: (classId) => request(`/classes/${classId}`, { method: "DELETE" }),
 
   // Students
   getStudents: (classId) => request(`/classes/${classId}/students`),
