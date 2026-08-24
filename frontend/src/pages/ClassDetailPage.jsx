@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import StudentsTab from "../components/StudentsTab";
 import AttendanceTab from "../components/AttendanceTab";
 import SubjectsTab from "../components/SubjectsTab";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import { api } from "../api/client";
 
 const TABS = [
@@ -14,10 +15,12 @@ const TABS = [
 
 export default function ClassDetailPage() {
   const { classId } = useParams();
+  const navigate = useNavigate();
   const [schoolClass, setSchoolClass] = useState(null);
   const [students, setStudents] = useState([]);
   const [tab, setTab] = useState("students");
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     loadClass();
@@ -37,6 +40,11 @@ export default function ClassDetailPage() {
   async function refreshStudents() {
     const data = await api.getStudents(classId);
     setStudents(data);
+  }
+
+  async function handleDeleteClass() {
+    await api.deleteClass(classId);
+    navigate("/classes");
   }
 
   if (error) {
@@ -60,12 +68,23 @@ export default function ClassDetailPage() {
       <Link to="/classes" className="text-sm text-slate/50 hover:text-slate mb-2 inline-block">
         ← All classes
       </Link>
-      <h1 className="font-display text-2xl font-semibold text-chalkboard mb-1">
-        {schoolClass.name}
-      </h1>
-      <p className="text-sm text-slate/60 mb-6">
-        {schoolClass.academic_year} · {schoolClass.term}
-      </p>
+
+      <div className="flex items-start justify-between mb-6">
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-chalkboard mb-1">
+            {schoolClass.name}
+          </h1>
+          <p className="text-sm text-slate/60">
+            {schoolClass.academic_year} · {schoolClass.term}
+          </p>
+        </div>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="text-sm text-terracotta border border-terracotta/30 hover:bg-terracotta/10 px-3 py-1.5 rounded-md transition"
+        >
+          Delete class
+        </button>
+      </div>
 
       <div className="flex gap-1 border-b border-line mb-6">
         {TABS.map((t) => (
@@ -88,6 +107,16 @@ export default function ClassDetailPage() {
       )}
       {tab === "attendance" && <AttendanceTab classId={classId} students={students} />}
       {tab === "subjects" && <SubjectsTab classId={classId} students={students} />}
+
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          title={`Delete ${schoolClass.name}?`}
+          message="This permanently deletes the class along with all its students, attendance records, subjects, and CA/exam scores. This cannot be undone."
+          confirmWord={schoolClass.name}
+          onConfirm={handleDeleteClass}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
     </Layout>
   );
 }
