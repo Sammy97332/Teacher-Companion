@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #FBF9F4;
+  color: #3D4A47;
+}
+
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+}
