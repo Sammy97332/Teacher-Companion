@@ -18,6 +18,7 @@ export default function ReportCardPage() {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     loadReport(term);
@@ -35,6 +36,18 @@ export default function ReportCardPage() {
       setReport(null);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDownloadPdf() {
+    setDownloading(true);
+    setError("");
+    try {
+      await api.downloadReportCardPdf(studentId, term);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDownloading(false);
     }
   }
 
@@ -63,12 +76,21 @@ export default function ReportCardPage() {
             </button>
           </div>
           {report && (
-            <button
-              onClick={() => window.print()}
-              className="bg-amber hover:bg-amber/90 text-chalkboard px-4 py-2 rounded-md text-sm font-medium transition"
-            >
-              Print report card
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleDownloadPdf}
+                disabled={downloading}
+                className="bg-chalkboard hover:bg-chalkboard2 text-paper px-4 py-2 rounded-md text-sm font-medium transition disabled:opacity-60"
+              >
+                {downloading ? "Preparing…" : "Download PDF"}
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="bg-amber hover:bg-amber/90 text-chalkboard px-4 py-2 rounded-md text-sm font-medium transition"
+              >
+                Print
+              </button>
+            </div>
           )}
         </div>
       </div>

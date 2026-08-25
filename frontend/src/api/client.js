@@ -41,6 +41,8 @@ export const api = {
   // Students
   getStudents: (classId) => request(`/classes/${classId}/students`),
   addStudent: (classId, payload) => request(`/classes/${classId}/students`, { method: "POST", body: payload }),
+  updateStudent: (studentId, payload) => request(`/students/${studentId}`, { method: "PUT", body: payload }),
+  deleteStudent: (studentId) => request(`/students/${studentId}`, { method: "DELETE" }),
 
   // Subjects
   getSubjects: (classId) => request(`/classes/${classId}/subjects`),
@@ -57,6 +59,30 @@ export const api = {
 
   // Report card
   getReportCard: (studentId, term) => request(`/students/${studentId}/report-card?term=${encodeURIComponent(term)}`),
+  downloadReportCardPdf: async (studentId, term) => {
+    const token = getToken();
+    const res = await fetch(
+      `${API_BASE}/students/${studentId}/report-card/pdf?term=${encodeURIComponent(term)}`,
+      { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+    );
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `Request failed (${res.status})`);
+    }
+    const blob = await res.blob();
+    const disposition = res.headers.get("Content-Disposition") || "";
+    const match = disposition.match(/filename="?([^"]+)"?/);
+    const filename = match ? match[1] : "report-card.pdf";
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  },
 
   // Admin
   getAdminOverview: () => request("/admin/overview"),

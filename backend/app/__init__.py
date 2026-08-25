@@ -27,6 +27,7 @@ def create_app():
     from app.routes.subjects import subjects_bp
     from app.routes.assessments import assessments_bp
     from app.routes.report_card import report_card_bp
+    from app.routes.report_card_pdf import report_card_pdf_bp
     from app.routes.admin import admin_bp
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(classes_bp, url_prefix="/api/classes")
@@ -35,6 +36,7 @@ def create_app():
     app.register_blueprint(subjects_bp, url_prefix="/api")
     app.register_blueprint(assessments_bp, url_prefix="/api")
     app.register_blueprint(report_card_bp, url_prefix="/api")
+    app.register_blueprint(report_card_pdf_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/api")
 
     with app.app_context():
