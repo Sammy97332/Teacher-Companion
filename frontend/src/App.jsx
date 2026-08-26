@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import ClassesPage from "./pages/ClassesPage";
 import ClassDetailPage from "./pages/ClassDetailPage";
 import ReportCardPage from "./pages/ReportCardPage";
+import AttendanceHistoryPage from "./pages/AttendanceHistoryPage";
 import AdminPage from "./pages/AdminPage";
 
 function ProtectedRoute({ children }) {
@@ -45,6 +46,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <ReportCardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/students/:studentId/attendance"
+        element={
+          <ProtectedRoute>
+            <AttendanceHistoryPage />
           </ProtectedRoute>
         }
       />

@@ -222,6 +222,12 @@ export default function StudentsTab({ classId, students, onStudentsChange }) {
                         >
                           Report card
                         </Link>
+                        <Link
+                          to={`/students/${s.id}/attendance`}
+                          className="text-slate/60 hover:text-chalkboard font-medium mr-3"
+                        >
+                          Attendance
+                        </Link>
                         {deletingId === s.id ? (
                           <span className="inline-flex items-center gap-2">
                             <span className="text-terracotta text-xs">Delete?</span>
