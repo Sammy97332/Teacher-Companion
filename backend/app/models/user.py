@@ -13,6 +13,11 @@ class User(db.Model):
     # "teacher" or "admin" — admin can see across all classes, teacher only their own
     role = db.Column(db.String(20), nullable=False, default="teacher")
 
+    # Email verification — a new account can't log in until this is True
+    email_verified = db.Column(db.Boolean, nullable=False, default=False)
+    verification_code = db.Column(db.String(6), nullable=True)
+    verification_code_expires = db.Column(db.DateTime, nullable=True)
+
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # A teacher can own many classes; admins typically own none directly
@@ -30,5 +35,6 @@ class User(db.Model):
             "full_name": self.full_name,
             "email": self.email,
             "role": self.role,
+            "email_verified": self.email_verified,
             "created_at": self.created_at.isoformat(),
         }

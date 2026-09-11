@@ -17,12 +17,23 @@ export function AuthProvider({ children }) {
     return data.user;
   }, []);
 
+  // Registering no longer logs the user in directly — an email verification
+  // step happens first. This just creates the (unverified) account.
   const register = useCallback(async (full_name, email, password, role) => {
     const data = await api.register({ full_name, email, password, role });
+    return data;
+  }, []);
+
+  const verifyEmail = useCallback(async (email, code) => {
+    const data = await api.verifyEmail({ email, code });
     localStorage.setItem("tc_token", data.access_token);
     localStorage.setItem("tc_user", JSON.stringify(data.user));
     setUser(data.user);
     return data.user;
+  }, []);
+
+  const resendCode = useCallback(async (email) => {
+    return api.resendCode({ email });
   }, []);
 
   const logout = useCallback(() => {
@@ -32,7 +43,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, verifyEmail, resendCode, logout }}>
       {children}
     </AuthContext.Provider>
   );

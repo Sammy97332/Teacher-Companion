@@ -21,7 +21,10 @@ async function request(path, { method = "GET", body, auth = true } = {}) {
 
   if (!res.ok) {
     const message = data.error || `Request failed (${res.status})`;
-    throw new Error(message);
+    const err = new Error(message);
+    err.data = data;
+    err.status = res.status;
+    throw err;
   }
 
   return data;
@@ -31,6 +34,9 @@ export const api = {
   // Auth
   register: (payload) => request("/auth/register", { method: "POST", body: payload, auth: false }),
   login: (payload) => request("/auth/login", { method: "POST", body: payload, auth: false }),
+  verifyEmail: (payload) => request("/auth/verify-email", { method: "POST", body: payload, auth: false }),
+  resendCode: (payload) => request("/auth/resend-code", { method: "POST", body: payload, auth: false }),
+  checkAdminAvailability: () => request("/auth/admin-availability", { auth: false }),
 
   // Classes
   getClasses: () => request("/classes"),

@@ -5,3 +5,4 @@ flask-bcrypt
 flask-cors
 python-dotenv
 reportlab
+psycopg2-binary
